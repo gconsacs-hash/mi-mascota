@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#bfe6ff">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Mi Mascota">
+  <title>Mi Mascota</title>
+  <link rel="icon" href="assets/icono-192.png">
+  <link rel="apple-touch-icon" href="assets/icono-192.png">
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Aviso para instalar la app (solo aparece si el teléfono lo permite y aún no está instalada) -->
+  <div id="instalar" class="instalar" hidden>
+    <span>📲 Puedes tener este juego como app en tu teléfono</span>
+    <button id="btnInstalar">Instalar</button>
+    <button id="btnCerrarInstalar" aria-label="Cerrar">✕</button>
+  </div>
+
+  <!-- Avisos flotantes (logros, monedas) -->
+  <div id="avisos" class="avisos" aria-live="polite"></div>
+
+  <!-- ===== Pantalla: la familia de mascotas ===== -->
+  <main id="pantallaFamilia" class="pantalla familia" hidden>
+    <h1>🌳 Mi Mascota 🌳</h1>
+    <p class="sub">¿A quién cuidamos hoy?</p>
+    <div id="listaFamilia" class="lista-familia"></div>
+    <button id="btnNuevaMascota" class="principal">🥚 Nueva mascota</button>
+    <p class="nota">Cada mascota necesita cuidado todos los días, aunque no la estés mirando.</p>
+    <footer class="pie">
+      <img class="logo" src="assets/logo-cffamilia.svg" alt="Logo CFfamilia">
+      <div>
+        <strong class="marca">CFfamilia<sup>™</sup></strong>
+        <p class="dedicatoria">Para nuestros hijos, con amor de sus padres GyA</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ===== Pantalla: elegir huevo y nombre ===== -->
+  <main id="pantallaInicio" class="pantalla inicio" hidden>
+    <button id="btnVolverFamilia" class="volver" hidden aria-label="Volver">‹ Volver</button>
+    <h1>🌳 Mi Mascota 🌳</h1>
+    <p class="sub">Elige un huevo. ¿Qué habrá adentro?</p>
+
+    <div id="huevos" class="huevos"></div>
+
+    <label class="campo">
+      ¿Cómo se va a llamar?
+      <input id="inputNombre" type="text" maxlength="14" placeholder="Escribe un nombre" autocomplete="off">
+    </label>
+
+    <button id="btnEmpezar" class="principal" disabled>¡Empezar! 🥚</button>
+
+    <footer class="pie">
+      <img class="logo" src="assets/logo-cffamilia.svg" alt="Logo CFfamilia">
+      <div>
+        <strong class="marca">CFfamilia<sup>™</sup></strong>
+        <p class="dedicatoria">Para nuestros hijos, con amor de sus padres GyA</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ===== Pantalla: el juego ===== -->
+  <main id="pantallaJuego" class="pantalla juego" hidden>
+
+    <button id="btnFamilia" class="redondo izquierda" aria-label="Ver la familia">🏠</button>
+    <button id="btnSonido" class="redondo derecha" aria-label="Silenciar">🔊</button>
+
+    <header>
+      <h1>🌳 Mi Mascota 🌳</h1>
+      <p id="etapaTexto">Huevo misterioso</p>
+      <button id="estacion" class="estacion" aria-label="Estación del año">🌸 Primavera</button>
+    </header>
+
+    <section class="zona-mascota">
+      <div id="escena" class="escena">
+        <div class="sol" aria-hidden="true">☀️</div>
+        <div class="noche" aria-hidden="true">
+          <span class="luna">🌙</span>
+          <span class="estrella e1">✦</span>
+          <span class="estrella e2">✦</span>
+          <span class="estrella e3">✦</span>
+        </div>
+        <div id="particulas" class="particulas" aria-hidden="true"></div>
+
+        <div class="cama" aria-hidden="true">
+          <svg viewBox="0 0 130 80" width="130" height="80">
+            <rect x="6" y="4" width="118" height="34" rx="10" fill="#8b5e3c"/>
+            <rect x="12" y="10" width="106" height="22" rx="7" fill="#a5714a"/>
+            <rect x="0" y="34" width="130" height="30" rx="9" fill="#f6f2ea" stroke="#d9cfc0" stroke-width="2"/>
+            <ellipse cx="30" cy="44" rx="20" ry="9" fill="#ffffff" stroke="#e3ddd2" stroke-width="2"/>
+            <rect x="8" y="62" width="12" height="16" rx="3" fill="#6f4a2e"/>
+            <rect x="110" y="62" width="12" height="16" rx="3" fill="#6f4a2e"/>
+          </svg>
+        </div>
+
+        <div id="amigo" class="mascota amigo" hidden>
+          <div class="dibujo"></div>
+          <span class="nombre-amigo"></span>
+        </div>
+
+        <div id="mascota" class="mascota">
+          <div id="mascotaImg" class="dibujo"></div>
+          <div class="zzz" aria-hidden="true">z z z</div>
+          <div class="enfermo-icono" aria-hidden="true">🤒</div>
+        </div>
+
+        <div class="manta" aria-hidden="true"></div>
+
+        <button id="pelota" class="pelota" hidden aria-label="Pelota">⚽</button>
+        <div id="efectos" class="efectos" aria-hidden="true"></div>
+      </div>
+
+      <h2 id="nombreMascota">Mascota</h2>
+      <p id="mensaje">¡Cuídame y creceré!</p>
+      <div id="huevoProgreso" class="huevo-progreso" hidden>
+        <div class="barra"><div id="huevoBarra"></div></div>
+        <small>Tócalo para que nazca</small>
+      </div>
+      <div id="juegoInfo" class="juego-info" hidden>
+        <span>⚽ Atrapadas: <strong id="atrapadas">0</strong> / <span id="atrapadasMeta">5</span></span>
+        <button id="btnTerminarJuego">Terminar</button>
+      </div>
+    </section>
+
+    <section id="stats" class="stats">
+      <div class="stat" data-stat="salud">
+        <span>❤️</span><strong id="salud">100</strong><small>Salud</small>
+        <div class="mini"><div id="saludBarra"></div></div>
+      </div>
+      <div class="stat" data-stat="comida">
+        <span>🍗</span><strong id="comida">100</strong><small>Comida</small>
+        <div class="mini"><div id="comidaBarra"></div></div>
+      </div>
+      <div class="stat" data-stat="animo">
+        <span>😊</span><strong id="animo">100</strong><small>Ánimo</small>
+        <div class="mini"><div id="animoBarra"></div></div>
+      </div>
+      <div class="stat" data-stat="energia">
+        <span>⚡</span><strong id="energia">100</strong><small>Energía</small>
+        <div class="mini"><div id="energiaBarra"></div></div>
+      </div>
+      <div class="stat" data-stat="higiene">
+        <span>🫧</span><strong id="higiene">100</strong><small>Limpieza</small>
+        <div class="mini"><div id="higieneBarra"></div></div>
+      </div>
+    </section>
+
+    <section id="experiencia" class="experiencia">
+      <div class="nivel">
+        <span>⭐ Nivel <strong id="nivel">1</strong></span>
+        <span class="monedas">🪙 <strong id="monedas">0</strong></span>
+        <span><strong id="xp">0</strong> / 100 XP</span>
+      </div>
+      <div class="barra"><div id="xpBarra"></div></div>
+    </section>
+
+    <section id="acciones" class="acciones">
+      <button id="btnComer">🍎<span>Alimentar</span></button>
+      <button id="btnJugar">🎮<span>Jugar</span></button>
+      <button id="btnDormir">😴<span>Dormir</span></button>
+      <button id="btnBanar">🛁<span>Bañar</span></button>
+    </section>
+
+    <section class="acciones secundarias">
+      <button id="btnRopa">👕<span>Ropa</span></button>
+      <button id="btnLogros">🏅<span>Logros</span></button>
+      <button id="btnAmigos">🤝<span>Amigos</span></button>
+    </section>
+
+    <section id="tareas" class="tareas">
+      <div class="tareas-cabecera">
+        <h3>📋 Tareas de hoy</h3>
+        <span id="racha" class="racha">🔥 0 días</span>
+      </div>
+      <ul id="listaTareas"></ul>
+      <p id="tareasEstado" class="tareas-estado"></p>
+    </section>
+
+    <section class="evolucion">
+      <h3>🌱 Evolución</h3>
+      <div id="evolucionRuta" class="ruta">
+        <span data-etapa="0">🥚<small>Huevo</small></span>
+        <span data-etapa="1">🐣<small>Bebé</small></span>
+        <span data-etapa="2">🌿<small>Joven</small></span>
+        <span data-etapa="3">🌟<small>Adulto</small></span>
+      </div>
+    </section>
+
+    <footer class="pie">
+      <img class="logo" src="assets/logo-cffamilia.svg" alt="Logo CFfamilia">
+      <div>
+        <strong class="marca">CFfamilia<sup>™</sup></strong>
+        <p class="dedicatoria">Para nuestros hijos, con amor de sus padres GyA</p>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ===== Panel de minijuegos ===== -->
+  <div id="panelJuegos" class="panel" hidden>
+    <div class="panel-caja">
+      <div class="panel-cabecera">
+        <strong id="panelTitulo">¿A qué jugamos?</strong>
+        <button id="btnSalirJuego" aria-label="Salir del juego">✕</button>
+      </div>
+      <div id="elegirJuego" class="elegir-juego"></div>
+      <div id="elegirDificultad" class="elegir-dificultad" hidden>
+        <p class="juego-ayuda" id="dificultadAyuda"></p>
+        <div class="dificultades"></div>
+      </div>
+      <div id="zonaJuego" class="zona-juego" hidden></div>
+    </div>
+  </div>
+
+  <!-- ===== Panel genérico (comida, ropa, logros, amigos) ===== -->
+  <div id="panel" class="panel" hidden>
+    <div class="panel-caja">
+      <div class="panel-cabecera">
+        <strong id="panelGenericoTitulo"></strong>
+        <button id="btnCerrarPanel" aria-label="Cerrar">✕</button>
+      </div>
+      <div id="panelContenido" class="panel-contenido"></div>
+    </div>
+  </div>
+
+  <script src="datos.js"></script>
+  <script src="personajes.js"></script>
+  <script src="juegos.js"></script>
+  <script src="app.js"></script>
+  <script>
+    // Registra el "service worker" para que la app funcione sin internet.
+    // Solo funciona cuando está publicada (https) o en localhost; abierta como archivo no hace nada.
+    if ("serviceWorker" in navigator && location.protocol !== "file:") {
+      navigator.serviceWorker.register("sw.js").catch(() => {});
+    }
+  </script>
+</body>
+</html>
