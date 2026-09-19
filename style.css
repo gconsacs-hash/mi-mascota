@@ -1,0 +1,905 @@
+/* ===== Mi Mascota — estilos ===== */
+
+:root {
+  --cielo1: #bfe6ff;
+  --cielo2: #e6f7ff;
+  --pasto1: #dcf6d0;
+  --pasto2: #b9e8a6;
+  --suelo: #9fd88c;
+  --tarjeta: #ffffff;
+  --texto: #2b3a4a;
+  --texto-suave: #6b7a8a;
+  --boton: #eef6ff;
+  --boton-borde: #cfe3fb;
+  --xp: #6bcf63;
+  --salud: #ff7b8a;
+  --comida: #ffb347;
+  --animo: #ffd93d;
+  --energia: #5ec8ff;
+  --higiene: #8fd9ff;
+  --radio: 24px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--texto);
+  background: linear-gradient(180deg, var(--cielo1), var(--cielo2));
+  min-height: 100vh;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: flex-start;
+  justify-content: center;
+  padding: 14px;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.pantalla {
+  width: 100%;
+  max-width: 430px;
+  background: var(--tarjeta);
+  border-radius: 28px;
+  padding: 20px;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, .14);
+  text-align: center;
+  position: relative;
+}
+.pantalla[hidden] { display: none; }
+
+button { font-family: inherit; }
+[hidden] { display: none !important; }
+
+/* Dibujos SVG de las mascotas */
+.dibujo { width: 100%; height: 100%; }
+.dibujo svg { width: 100%; height: 100%; display: block; }
+
+/* ----- Aviso de instalación ----- */
+.instalar {
+  width: 100%;
+  max-width: 430px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: #fff;
+  border: 2px solid #5aa9ff;
+  border-radius: 18px;
+  padding: 10px 12px;
+  margin-bottom: 12px;
+  font-size: 14px;
+  box-shadow: 0 8px 20px rgba(0,0,0,.1);
+}
+.instalar span { flex: 1; text-align: left; }
+.instalar button { border: none; font: inherit; cursor: pointer; border-radius: 12px; padding: 8px 14px; }
+#btnInstalar { background: #5aa9ff; color: #fff; font-weight: 700; }
+#btnCerrarInstalar { background: #eef0f2; color: #6b7a8a; padding: 8px 10px; }
+
+/* ----- Avisos flotantes (logros, monedas) ----- */
+.avisos {
+  position: fixed;
+  top: 12px; left: 50%;
+  transform: translateX(-50%);
+  width: calc(100% - 28px);
+  max-width: 400px;
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+.aviso {
+  background: #2b3a4a;
+  color: #fff;
+  padding: 10px 16px;
+  border-radius: 14px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 10px 25px rgba(0,0,0,.25);
+  animation: avisoEntra .35s ease-out;
+  text-align: center;
+}
+.aviso.monedas { background: #b8860b; }
+.aviso.logro { background: linear-gradient(90deg, #ff6f8a, #5aa9ff); font-size: 15px; }
+.aviso.irse { animation: avisoSale .5s ease-in forwards; }
+@keyframes avisoEntra { from { opacity: 0; transform: translateY(-16px) scale(.95); } to { opacity: 1; transform: none; } }
+@keyframes avisoSale { to { opacity: 0; transform: translateY(-10px); } }
+
+/* ----- Botones redondos de la cabecera ----- */
+.redondo {
+  position: absolute;
+  top: 12px;
+  width: 40px; height: 40px;
+  border: none;
+  border-radius: 50%;
+  background: #f3f5f7;
+  font-size: 18px;
+  cursor: pointer;
+  transition: transform .12s;
+  z-index: 2;
+}
+.redondo.derecha { right: 12px; }
+.redondo.izquierda { left: 12px; }
+.redondo:active { transform: scale(.9); }
+
+h1 { font-size: 26px; }
+header p, .sub { color: var(--texto-suave); margin-top: 4px; }
+.nota { color: var(--texto-suave); font-size: 13px; margin-top: 12px; }
+
+.estacion {
+  margin-top: 8px;
+  border: none;
+  background: #fff8d9;
+  color: #7a5a00;
+  border-radius: 20px;
+  padding: 5px 12px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.estacion-invierno .estacion { background: #e3f2ff; color: #1b5a8a; }
+.estacion-otono .estacion { background: #ffe9d6; color: #8a4a1b; }
+.estacion-primavera .estacion { background: #ffe3ef; color: #8a1b55; }
+.estacion-verano .estacion { background: #fff3c4; color: #8a6a00; }
+
+/* ----- Pantalla de la familia ----- */
+.familia { margin-top: 20px; }
+.lista-familia { display: grid; gap: 10px; margin: 18px 0; }
+.tarjeta-mascota {
+  display: grid;
+  grid-template-columns: 84px 1fr 36px;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  background: #f5f9ff;
+  border: 3px solid transparent;
+  border-radius: 20px;
+  padding: 10px;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s;
+}
+.tarjeta-mascota:active { transform: scale(.98); }
+.tarjeta-mascota.actual { border-color: #5aa9ff; }
+.tarjeta-mascota .dibujo { width: 84px; height: 84px; }
+.tarjeta-mascota .info { display: flex; flex-direction: column; gap: 2px; }
+.tarjeta-mascota .info strong { font-size: 19px; }
+.tarjeta-mascota .info small { font-size: 12px; color: var(--texto-suave); }
+.tarjeta-mascota .info .necesita { color: var(--texto); }
+.tarjeta-mascota .borrar {
+  border: none;
+  background: transparent;
+  font-size: 16px;
+  opacity: .45;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 50%;
+}
+.tarjeta-mascota .borrar:active { background: #ffe1e1; opacity: 1; }
+
+/* ----- Pantalla de inicio ----- */
+.inicio { margin-top: 20px; }
+.volver {
+  position: absolute;
+  top: 14px; left: 14px;
+  border: none;
+  background: #f3f5f7;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  color: var(--texto-suave);
+}
+
+.huevos {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 18px 0 16px;
+}
+.huevo {
+  border: 3px solid transparent;
+  background: #f5f9ff;
+  border-radius: 20px;
+  padding: 8px 6px 6px;
+  cursor: pointer;
+  transition: transform .15s, border-color .15s;
+  font: inherit;
+  color: var(--texto);
+}
+.huevo .dibujo { width: 100%; max-width: 90px; height: 90px; margin: 0 auto 2px; }
+.huevo span { font-size: 13px; }
+.huevo:active { transform: scale(.96); }
+.huevo.elegido { border-color: #5aa9ff; background: #e8f2ff; transform: scale(1.05); }
+
+.campo {
+  display: block;
+  font-size: 15px;
+  color: var(--texto-suave);
+  margin-bottom: 18px;
+}
+.campo input {
+  display: block;
+  width: 100%;
+  margin-top: 8px;
+  font: inherit;
+  font-size: 20px;
+  text-align: center;
+  padding: 12px;
+  border: 2px solid var(--boton-borde);
+  border-radius: 16px;
+  outline: none;
+  color: var(--texto);
+  background: #fff;
+}
+.campo input:focus { border-color: #5aa9ff; }
+.campo.chico { font-size: 13px; margin: 14px 0 10px; }
+.campo.chico input { font-size: 14px; padding: 10px; }
+
+.principal {
+  width: 100%;
+  border: none;
+  background: #5aa9ff;
+  color: white;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 700;
+  padding: 16px;
+  border-radius: 18px;
+  cursor: pointer;
+  transition: transform .15s, opacity .15s;
+}
+.principal:disabled { opacity: .4; cursor: default; }
+.principal:not(:disabled):active { transform: scale(.97); }
+
+/* ----- Zona de la mascota ----- */
+.zona-mascota {
+  margin-top: 14px;
+  background: linear-gradient(180deg, var(--pasto1), var(--pasto2));
+  border-radius: var(--radio);
+  padding: 18px 10px 14px;
+  position: relative;
+  transition: background 1s;
+}
+/* Colores según la estación */
+.estacion-invierno .zona-mascota { --pasto1: #eaf3fb; --pasto2: #d3e6f5; --suelo: #ffffff; }
+.estacion-otono .zona-mascota    { --pasto1: #f7e9c9; --pasto2: #e6c98e; --suelo: #d1a25e; }
+.estacion-verano .zona-mascota   { --pasto1: #f3f7c2; --pasto2: #cfe58a; --suelo: #b6d36a; }
+
+.escena {
+  position: relative;
+  height: 215px;
+  border-radius: 18px;
+  overflow: hidden;
+}
+.escena::after { /* suelo al pie */
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 14px;
+  background: var(--suelo);
+  border-radius: 0 0 18px 18px;
+}
+
+.sol {
+  position: absolute;
+  top: 8px; right: 12px;
+  font-size: 28px;
+  transition: opacity 1s, transform 1s;
+}
+.estacion-verano .sol { font-size: 36px; filter: drop-shadow(0 0 10px #ffe37a); }
+.estacion-invierno .sol { opacity: .7; }
+.escena.es-noche .sol { opacity: 0; transform: translateY(20px); }
+
+.noche {
+  position: absolute;
+  inset: 0;
+  background: #1b2a4a;
+  opacity: 0;
+  transition: opacity 1.2s;
+  pointer-events: none;
+  z-index: 4;
+}
+.escena.es-noche .noche { opacity: .55; }
+.noche .luna { position: absolute; top: 8px; right: 14px; font-size: 28px; }
+.noche .estrella { position: absolute; color: #fff6c4; font-size: 14px; animation: titilar 2s ease-in-out infinite; }
+.noche .e1 { top: 18px; left: 20px; }
+.noche .e2 { top: 44px; left: 60px; animation-delay: .7s; }
+.noche .e3 { top: 26px; left: 120px; animation-delay: 1.3s; }
+@keyframes titilar { 0%,100% { opacity: .4; } 50% { opacity: 1; } }
+
+/* Hojas, nieve o pétalos que caen */
+.particulas { position: absolute; inset: 0; pointer-events: none; z-index: 1; overflow: hidden; }
+.particulas span {
+  position: absolute;
+  top: -20px;
+  animation: caer 8s linear infinite;
+  opacity: .85;
+}
+@keyframes caer {
+  0%   { transform: translateY(0) translateX(0) rotate(0); }
+  50%  { transform: translateY(110px) translateX(14px) rotate(180deg); }
+  100% { transform: translateY(240px) translateX(-10px) rotate(360deg); }
+}
+
+.cama {
+  position: absolute;
+  right: 5%;
+  bottom: 6px;
+  width: 130px;
+  z-index: 1;
+  opacity: 0;
+  transform: translateX(40px);
+  transition: opacity .6s, transform .6s;
+}
+.cama svg { display: block; width: 100%; height: auto; }
+.escena.a-la-cama .cama { opacity: 1; transform: translateX(0); }
+
+.manta {
+  position: absolute;
+  right: 5%;
+  bottom: 14px;
+  width: 130px;
+  height: 58px;
+  background: linear-gradient(180deg, #8fc1ff, #6ea8f5);
+  border-radius: 26px 26px 10px 10px;
+  z-index: 3;
+  opacity: 0;
+  transition: opacity .5s;
+  pointer-events: none;
+}
+.manta::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; top: 0;
+  height: 12px;
+  background: #d9ecff;
+  border-radius: 26px 26px 0 0;
+}
+.escena.en-cama .manta { opacity: 1; }
+
+.mascota {
+  width: 150px;
+  height: 150px;
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  z-index: 2;
+  transition: left .9s ease-in-out, bottom .9s ease-in-out, transform .9s ease-in-out, filter .4s;
+}
+.mascota .dibujo { width: 100%; height: 100%; }
+.mascota:active .dibujo { transform: scale(.94); }
+.escena.a-la-cama .mascota:not(.amigo) { left: calc(95% - 65px); transform: translateX(-50%) scale(.85); }
+
+/* Mascota amiga de visita */
+.mascota.amigo {
+  width: 120px; height: 120px;
+  left: 18%;
+  bottom: 10px;
+  cursor: default;
+  opacity: 0;
+  transform: translateX(-120%);
+  transition: opacity .8s, transform .9s ease-out;
+}
+.mascota.amigo.llega { opacity: 1; transform: translateX(-50%); }
+.mascota.amigo.llega .dibujo { animation: saltar 1.2s ease-in-out infinite; }
+.mascota.amigo.irse { opacity: 0; transform: translateX(-140%); }
+.nombre-amigo {
+  position: absolute;
+  bottom: -4px; left: 50%;
+  transform: translateX(-50%);
+  background: rgba(255,255,255,.85);
+  border-radius: 10px;
+  padding: 2px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.enfermo-icono {
+  position: absolute;
+  top: 0; left: -6px;
+  font-size: 26px;
+  opacity: 0;
+  transition: opacity .4s;
+}
+.mascota.enfermo .enfermo-icono { opacity: 1; animation: flotarSuave 2s ease-in-out infinite; }
+.mascota.enfermo .dibujo { filter: saturate(.55) brightness(.95); }
+@keyframes flotarSuave { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-5px); } }
+
+/* Pelota del minijuego */
+.pelota {
+  position: absolute;
+  font-size: 40px;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 5;
+  padding: 6px;
+  transform: translateX(-50%);
+  filter: drop-shadow(0 4px 4px rgba(0,0,0,.2));
+}
+.pelota.chica { font-size: 30px; }
+.pelota.rebotar { animation: rebotar .8s ease-in-out infinite; }
+@keyframes rebotar { 0%,100% { transform: translateX(-50%) translateY(0); } 50% { transform: translateX(-50%) translateY(-14px); } }
+
+/* Efectos flotantes (comida, burbujas, estrellas) */
+.efectos { position: absolute; inset: 0; pointer-events: none; z-index: 6; }
+.efecto {
+  position: absolute;
+  font-size: 26px;
+  transform: translateX(-50%);
+  animation: flotarEfecto 1.2s ease-out forwards;
+}
+.efecto.comer { animation: irALaBoca .7s ease-in forwards; }
+.efecto.estrella { animation: estallar 1s ease-out forwards; }
+@keyframes flotarEfecto { 0% { opacity: 0; transform: translateX(-50%) translateY(6px) scale(.7); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateX(-50%) translateY(-50px) scale(1.1); } }
+@keyframes irALaBoca { 0% { opacity: 1; transform: translateX(-50%) scale(1); } 80% { opacity: 1; transform: translateX(calc(-50% + 46px)) scale(.9); } 100% { opacity: 0; transform: translateX(calc(-50% + 50px)) scale(.2); } }
+@keyframes estallar { 0% { opacity: 1; transform: translate(-50%, 0) scale(.5); } 100% { opacity: 0; transform: translate(calc(-50% + var(--dx)), var(--dy)) scale(1.3); } }
+
+/* Animaciones de la mascota según su ánimo */
+.mascota.normal .dibujo { animation: respirar 3s ease-in-out infinite; }
+.mascota.feliz .dibujo { animation: saltar 1.2s ease-in-out infinite; }
+.mascota.triste .dibujo { animation: respirar 4s ease-in-out infinite; filter: saturate(.6) brightness(.95); transform-origin: bottom; }
+.mascota.dormido .dibujo { animation: dormir 3s ease-in-out infinite; filter: brightness(.8); }
+.mascota.huevo .dibujo { animation: none; }
+.mascota.tambalear .dibujo { animation: tambalear .35s ease-in-out; }
+.mascota.brinco .dibujo { animation: brinco .45s ease-out; }
+.mascota.evolucionar .dibujo { animation: evolucionar 1s ease-out; }
+.mascota.moviendo .dibujo { animation: caminar .35s ease-in-out infinite; }
+
+.zzz {
+  position: absolute;
+  top: 6px; right: 0;
+  font-weight: 700;
+  color: #4a5b7a;
+  opacity: 0;
+  letter-spacing: 2px;
+}
+.mascota.dormido .zzz { animation: flotar 2s ease-in-out infinite; }
+
+@keyframes respirar { 0%,100% { transform: scaleY(1); } 50% { transform: scaleY(1.03) translateY(-2px); } }
+@keyframes saltar { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes dormir { 0%,100% { transform: scale(1); } 50% { transform: scale(1.02, .98); } }
+@keyframes tambalear { 0%,100% { transform: rotate(0); } 25% { transform: rotate(-8deg); } 75% { transform: rotate(8deg); } }
+@keyframes brinco { 0% { transform: scale(1); } 40% { transform: scale(1.12) translateY(-10px); } 100% { transform: scale(1); } }
+@keyframes evolucionar { 0% { transform: scale(.4); filter: brightness(3); } 60% { transform: scale(1.15); } 100% { transform: scale(1); filter: brightness(1); } }
+@keyframes flotar { 0% { opacity: 0; transform: translateY(6px); } 30% { opacity: 1; } 100% { opacity: 0; transform: translateY(-14px); } }
+@keyframes caminar { 0%,100% { transform: rotate(-5deg) translateY(0); } 50% { transform: rotate(5deg) translateY(-6px); } }
+
+#nombreMascota { margin-top: 6px; font-size: 24px; }
+#mensaje { margin-top: 6px; color: #4a5b4a; min-height: 22px; font-size: 16px; }
+
+.huevo-progreso { margin: 10px auto 0; max-width: 220px; }
+.huevo-progreso small { color: #4a5b4a; display: block; margin-top: 4px; }
+
+.juego-info {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+  font-size: 15px;
+}
+.juego-info button {
+  border: none;
+  background: rgba(255,255,255,.7);
+  border-radius: 10px;
+  padding: 6px 12px;
+  font: inherit;
+  font-size: 13px;
+  color: #4a5b4a;
+  cursor: pointer;
+}
+
+/* ----- Barras ----- */
+.barra {
+  width: 100%;
+  height: 14px;
+  background: #e5e9ee;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.barra > div { height: 100%; width: 0; background: var(--xp); transition: width .3s; }
+
+/* ----- Estadísticas ----- */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px;
+  margin-top: 14px;
+}
+.stat {
+  background: #f3f5f7;
+  border-radius: 16px;
+  padding: 10px 2px 8px;
+  transition: background .3s;
+}
+.stat span { display: block; font-size: 20px; }
+.stat strong { display: block; font-size: 17px; margin-top: 2px; }
+.stat small { color: var(--texto-suave); font-size: 10px; }
+.stat .mini { height: 6px; background: #dfe4ea; border-radius: 6px; margin: 6px 4px 0; overflow: hidden; }
+.stat .mini > div { height: 100%; width: 100%; border-radius: 6px; transition: width .4s; }
+.stat[data-stat="salud"] .mini > div { background: var(--salud); }
+.stat[data-stat="comida"] .mini > div { background: var(--comida); }
+.stat[data-stat="animo"] .mini > div { background: var(--animo); }
+.stat[data-stat="energia"] .mini > div { background: var(--energia); }
+.stat[data-stat="higiene"] .mini > div { background: var(--higiene); }
+.stat.bajo { background: #fff0f0; }
+.stat.bajo strong { color: #d64545; }
+
+/* ----- Experiencia y monedas ----- */
+.experiencia { margin-top: 16px; }
+.nivel { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; font-size: 15px; }
+.monedas { background: #fff3c4; color: #7a5a00; border-radius: 12px; padding: 3px 10px; font-weight: 700; }
+
+/* ----- Acciones ----- */
+.acciones {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  margin-top: 18px;
+}
+.acciones button {
+  border: 2px solid var(--boton-borde);
+  background: var(--boton);
+  border-radius: 18px;
+  padding: 14px 5px;
+  font-size: 28px;
+  cursor: pointer;
+  transition: transform .12s, opacity .2s;
+  color: var(--texto);
+}
+.acciones button span { display: block; font-size: 14px; margin-top: 4px; font-weight: 600; }
+.acciones button:active { transform: scale(.95); }
+.acciones button:disabled { opacity: .35; cursor: default; transform: none; }
+.acciones button.bloqueado:not(:disabled) { opacity: .6; }
+.acciones.secundarias { grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: 12px; }
+.acciones.secundarias button { padding: 10px 4px; font-size: 24px; background: #fff; }
+.acciones.secundarias button span { font-size: 12px; }
+
+/* ----- Tareas del día ----- */
+.tareas {
+  margin-top: 18px;
+  padding: 14px;
+  background: #f3f9ee;
+  border-radius: 18px;
+  text-align: left;
+}
+.tareas-cabecera { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.tareas h3 { font-size: 16px; }
+.racha { background: #ffe9d6; color: #8a4a1b; border-radius: 12px; padding: 3px 10px; font-size: 13px; font-weight: 700; }
+.tareas ul { list-style: none; display: grid; gap: 5px; }
+.tareas li { font-size: 14px; display: flex; gap: 6px; align-items: center; }
+.tareas li.hecha { color: var(--texto-suave); text-decoration: line-through; }
+.tareas li small { color: var(--texto-suave); }
+.tareas-estado { margin-top: 8px; font-size: 12px; color: var(--texto-suave); }
+
+/* ----- Evolución ----- */
+.evolucion {
+  margin-top: 18px;
+  padding: 12px;
+  background: #fff8d9;
+  border-radius: 18px;
+}
+.evolucion h3 { margin-bottom: 8px; font-size: 16px; }
+.ruta { display: flex; justify-content: space-around; }
+.ruta span { font-size: 24px; opacity: .35; transition: opacity .3s, transform .3s; }
+.ruta span small { display: block; font-size: 10px; color: var(--texto-suave); }
+.ruta span.logrado { opacity: 1; }
+.ruta span.actual { opacity: 1; transform: scale(1.2); }
+
+/* ----- Paneles (ventanas encima del juego) ----- */
+.panel {
+  position: fixed;
+  inset: 0;
+  background: rgba(27, 42, 74, .55);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 14px;
+  z-index: 50;
+  overflow-y: auto;
+}
+.panel-caja {
+  width: 100%;
+  max-width: 430px;
+  background: #fff;
+  border-radius: 24px;
+  padding: 16px;
+  box-shadow: 0 20px 50px rgba(0,0,0,.3);
+  text-align: center;
+}
+.panel-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 18px;
+}
+.panel-cabecera button {
+  width: 36px; height: 36px;
+  border: none;
+  border-radius: 50%;
+  background: #eef0f2;
+  color: #6b7a8a;
+  font-size: 16px;
+  cursor: pointer;
+}
+.texto-panel { font-size: 14px; color: var(--texto-suave); margin-bottom: 12px; line-height: 1.4; }
+.texto-panel.chico { font-size: 12px; margin-top: 10px; }
+button.chico { border: none; background: #eef0f2; border-radius: 10px; padding: 6px 10px; font-size: 12px; cursor: pointer; color: var(--texto-suave); }
+
+.elegir-juego { display: grid; gap: 10px; }
+.elegir-juego button {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  grid-template-rows: auto auto;
+  align-items: center;
+  column-gap: 12px;
+  text-align: left;
+  border: 2px solid var(--boton-borde);
+  background: var(--boton);
+  border-radius: 18px;
+  padding: 12px 14px;
+  font-size: 15px;
+  cursor: pointer;
+  color: var(--texto);
+  transition: transform .12s;
+}
+.elegir-juego button:active { transform: scale(.97); }
+.elegir-juego button i { grid-row: 1 / 3; font-style: normal; font-size: 36px; text-align: center; }
+.elegir-juego button span { font-size: 17px; font-weight: 700; }
+.elegir-juego button small { font-size: 13px; color: var(--texto-suave); }
+
+.dificultades { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.dificultades button {
+  border: 2px solid var(--boton-borde);
+  background: var(--boton);
+  border-radius: 18px;
+  padding: 14px 6px;
+  cursor: pointer;
+  color: var(--texto);
+}
+.dificultades button.elegida { border-color: #5aa9ff; background: #e8f2ff; }
+.dificultades button i { display: block; font-style: normal; font-size: 32px; }
+.dificultades button span { display: block; font-weight: 700; font-size: 15px; margin-top: 4px; }
+.dificultades button small { display: block; font-size: 11px; color: var(--texto-suave); }
+
+.zona-juego { position: relative; }
+.juego-ayuda { color: var(--texto-suave); font-size: 14px; margin-bottom: 8px; }
+
+.juego-fin {
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,.93);
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 22px;
+  z-index: 3;
+}
+.juego-fin span { font-size: 15px; color: var(--texto-suave); }
+.juego-fin button {
+  margin-top: 10px;
+  border: none;
+  background: #5aa9ff;
+  color: #fff;
+  font: inherit;
+  font-size: 17px;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 14px;
+  cursor: pointer;
+}
+
+/* Bloques */
+.bloques-info, .memoria-info, .secuencia-info, .canasta-info, .numeros-info { font-size: 15px; margin-bottom: 8px; }
+.bloques-canvas { display: block; margin: 0 auto; border-radius: 10px; border: 2px solid #e3e8ee; touch-action: none; }
+.bloques-controles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 10px; }
+.bloques-controles button {
+  border: 2px solid var(--boton-borde);
+  background: var(--boton);
+  border-radius: 14px;
+  padding: 12px 0;
+  font-size: 24px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.bloques-controles button:active { background: #dbeaff; }
+
+/* Memoria */
+.memoria-tablero { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.carta {
+  aspect-ratio: 3 / 4;
+  border: none;
+  border-radius: 14px;
+  background: transparent;
+  cursor: pointer;
+  perspective: 600px;
+  padding: 0;
+  position: relative;
+}
+.carta span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  font-size: 34px;
+  backface-visibility: hidden;
+  transition: transform .35s;
+}
+.carta .frente { background: linear-gradient(135deg, #5aa9ff, #b58cff); color: #fff; font-weight: 800; }
+.carta .dorso { background: #fff8d9; border: 2px solid #ffe08a; transform: rotateY(180deg); }
+.carta.volteada .frente { transform: rotateY(180deg); }
+.carta.volteada .dorso { transform: rotateY(0); }
+.carta.lista .dorso { background: #e3f7e8; border-color: #6fcf97; }
+
+/* Secuencia */
+.secuencia-tablero { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; max-width: 300px; margin: 0 auto; }
+.pad {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 22px;
+  background: var(--color);
+  opacity: .55;
+  cursor: pointer;
+  transition: opacity .12s, transform .12s;
+  touch-action: manipulation;
+}
+.pad.activo, .pad:active { opacity: 1; transform: scale(1.05); box-shadow: 0 0 20px var(--color); }
+
+/* Canasta */
+.canasta-canvas { display: block; margin: 0 auto; border-radius: 12px; border: 2px solid #e3e8ee; touch-action: none; }
+
+/* Números */
+.numeros-tiempo { height: 10px; margin-bottom: 14px; }
+.numeros-tiempo > div { background: var(--energia); transition: none; }
+.numeros-pregunta { font-size: 40px; font-weight: 800; margin: 10px 0 18px; }
+.numeros-opciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.numeros-opciones button {
+  border: 2px solid var(--boton-borde);
+  background: var(--boton);
+  border-radius: 18px;
+  padding: 18px 6px;
+  font-size: 28px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--texto);
+}
+.numeros-opciones button.bien { background: #e3f7e8; border-color: #6fcf97; }
+.numeros-opciones button.mal { background: #ffe1e1; border-color: #ff7b8a; }
+
+/* Comida */
+.rejilla-comida { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.rejilla-comida button, .rejilla-ropa button {
+  border: 2px solid var(--boton-borde);
+  background: var(--boton);
+  border-radius: 16px;
+  padding: 10px 4px 8px;
+  cursor: pointer;
+  color: var(--texto);
+  transition: transform .12s;
+}
+.rejilla-comida button:active, .rejilla-ropa button:active { transform: scale(.95); }
+.rejilla-comida button i, .rejilla-ropa button i { display: block; font-style: normal; font-size: 32px; }
+.rejilla-comida button span, .rejilla-ropa button span { display: block; font-size: 13px; font-weight: 700; margin-top: 2px; }
+.rejilla-comida button small, .rejilla-ropa button small { display: block; font-size: 10px; color: var(--texto-suave); margin-top: 2px; }
+.rejilla-comida button.favorito { border-color: #ffd35a; background: #fff8d9; }
+
+/* Ropa */
+.ropa-vista {
+  display: grid;
+  grid-template-columns: 110px 1fr;
+  align-items: center;
+  gap: 12px;
+  background: linear-gradient(180deg, var(--pasto1), var(--pasto2));
+  border-radius: 18px;
+  padding: 10px;
+  text-align: left;
+}
+.ropa-vista .dibujo { width: 110px; height: 110px; }
+.ropa-vista-info { display: flex; flex-direction: column; gap: 6px; align-items: flex-start; }
+.ropa-vista-info strong { font-size: 18px; }
+.ropa-zona { text-align: left; margin: 14px 0 8px; font-size: 15px; }
+.rejilla-ropa { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.rejilla-ropa button.puesta { border-color: #6fcf97; background: #e3f7e8; }
+.rejilla-ropa button.tiene { background: #fff; }
+.rejilla-ropa button.bloqueada { opacity: .6; }
+.rejilla-ropa button.comprar small { color: #7a5a00; font-weight: 700; }
+
+/* Logros */
+.rejilla-logros { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.rejilla-logros div {
+  background: #f3f5f7;
+  border-radius: 16px;
+  padding: 10px 6px;
+  opacity: .55;
+}
+.rejilla-logros div.ganado { opacity: 1; background: #fff8d9; border: 2px solid #ffe08a; }
+.rejilla-logros i { display: block; font-style: normal; font-size: 30px; }
+.rejilla-logros span { display: block; font-size: 12px; font-weight: 700; margin-top: 4px; }
+.rejilla-logros small { display: block; font-size: 10px; color: var(--texto-suave); margin-top: 2px; line-height: 1.25; }
+
+/* Amigos */
+.codigo-caja { background: #f3f5f7; border-radius: 16px; padding: 12px; }
+.codigo-caja small { display: block; color: var(--texto-suave); font-size: 12px; margin-bottom: 4px; }
+.codigo-caja code {
+  display: block;
+  font-size: 13px;
+  word-break: break-all;
+  user-select: all;
+  -webkit-user-select: all;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px;
+}
+.fila-botones { display: flex; gap: 8px; margin-top: 8px; }
+.fila-botones button {
+  flex: 1;
+  border: 2px solid var(--boton-borde);
+  background: var(--boton);
+  border-radius: 12px;
+  padding: 9px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--texto);
+}
+
+/* Estaciones (panel) */
+.estaciones-lista { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px; }
+.estaciones-lista div { background: #f3f5f7; border-radius: 14px; padding: 10px 4px; opacity: .5; }
+.estaciones-lista div.actual { opacity: 1; background: #fff8d9; border: 2px solid #ffe08a; }
+.estaciones-lista span { display: block; font-size: 28px; }
+.estaciones-lista small { font-size: 11px; }
+
+/* ----- Pie: marca y dedicatoria ----- */
+.pie {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  padding-top: 16px;
+  border-top: 1px solid #edf1f5;
+  text-align: left;
+}
+.pie .logo { width: 52px; height: 52px; flex: none; filter: drop-shadow(0 3px 6px rgba(90, 169, 255, .25)); }
+.pie .marca {
+  display: block;
+  font-size: 17px;
+  font-weight: 800;
+  letter-spacing: .3px;
+  background: linear-gradient(90deg, #ff6f8a, #5aa9ff);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.pie .marca sup { font-size: 9px; font-weight: 600; margin-left: 1px; }
+.pie .dedicatoria { margin-top: 2px; font-size: 13px; color: var(--texto-suave); font-style: italic; line-height: 1.3; }
+
+/* Mascota que todavía es huevo: se ocultan stats/acciones para no confundir */
+.juego.es-huevo .stats,
+.juego.es-huevo .experiencia,
+.juego.es-huevo .acciones,
+.juego.es-huevo .tareas { display: none; }
+
+@media (max-width: 360px) {
+  .pantalla { padding: 14px; }
+  .mascota { width: 140px; height: 140px; }
+  .stats { gap: 4px; }
+  .stat span { font-size: 17px; }
+  .stat strong { font-size: 15px; }
+  h1 { font-size: 22px; }
+  .rejilla-comida, .rejilla-ropa, .rejilla-logros { grid-template-columns: repeat(2, 1fr); }
+}
